@@ -152,9 +152,9 @@ nassh.ConnectDialog.prototype.msg = function(name, opt_args) {
  */
 nassh.ConnectDialog.prototype.alignLabels_ = function() {
   var labels = [
-      this.$f('identity').previousElementSibling,
-      this.$f('argstr').previousElementSibling,
-      this.$f('terminal-profile').previousElementSibling
+      document.querySelector('#identity-label'),
+      document.querySelector('#argstr-label'),
+      document.querySelector('#terminal-profile-label')
   ];
 
   var labelWidth = Math.max.apply(
@@ -274,6 +274,69 @@ nassh.ConnectDialog.prototype.installHandlers_ = function() {
       this.importFileInput_.click();
       e.preventDefault();
     }.bind(this));
+
+  var generateLink = document.querySelector('#generate-link');
+  generateLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      this.generateKeys_();
+    }.bind(this));
+
+  var copyPubkeyLink = document.querySelector('#copy-pubkey-link');
+  copyPubkeyLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      this.copyPubkey_();
+    }.bind(this));
+};
+
+/**
+ * Generate a new SSH key pair.  (This is async because it takes
+ * multiple seconds.  It changes the UI while running.)
+ */
+nassh.ConnectDialog.prototype.generateKeys_ = function() {
+  var generateLink = document.querySelector('#generate-link');
+  generateLink.classList.add('generating');
+  generateLink.textContent = nassh.msg('GENERATING_LABEL');
+  generateLink.disabled = true;
+  var keygen = forge.pki.rsa.createKeyPairGenerationState(2048);
+  var passphrase = null;
+  var keyname = 'generated';
+  var step = function() {
+    console.log('key generation step');
+    // 70 ms steps
+    if(forge.pki.rsa.stepKeyPairGenerationState(keygen, 70)) {
+      var id_rsa = forge.ssh.privateKeyToOpenSSH(keygen.keys.privateKey, passphrase);
+      var id_rsa_pub = forge.ssh.publicKeyToOpenSSH(keygen.keys.publicKey, keyname);
+      var id_rsa_ppk = forge.ssh.privateKeyToPutty(keygen.keys.privateKey, passphrase, keyname);
+      console.log(id_rsa_pub);
+      lib.fs.overwriteFile(this.fileSystem_.root,
+                           '/.ssh/generated', id_rsa, function() {
+        lib.fs.overwriteFile(this.fileSystem_.root,
+                             '/.ssh/generated.pub', id_rsa_pub, function() {
+          this.syncIdentityDropdown_(function() {
+            var select = this.$f('identity');
+            select.selectedIndex = select.childNodes.length - 1;
+            generateLink.disabled = false;
+            generateLink.classList.remove('generating');
+            generateLink.textContent = nassh.msg('GENERATE_LINK_LABEL');
+          }.bind(this));
+        }.bind(this));
+      }.bind(this));
+    } else {
+      setTimeout(step, 1);
+    }
+  }.bind(this);
+  setTimeout(step);
+};
+
+/**
+ * Copy the currently selected pubkey (if any) to the clipboard.
+ */
+nassh.ConnectDialog.prototype.copyPubkey_ = function() {
+  var selectedName = this.$f('identity').value;
+  lib.fs.readFile(this.fileSystem_.root,
+                  '/.ssh/'+selectedName+'.pub', function(pubkeyText) {
+    this.postMessage('copy', [pubkeyText]);
+  }.bind(this));
 };
 
 /**

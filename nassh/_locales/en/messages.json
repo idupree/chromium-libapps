@@ -156,6 +156,31 @@
     "description": "The aria-label for the Import link."
   },
 
+  "GENERATE_LINK_LABEL": {
+    "message": "Generate...",
+    "description": "The button to generate a new SSH key."
+  },
+
+  "GENERATE_LINK_ARIA_LABEL": {
+    "message": "key generate",
+    "description": "The aria-label for the Generate link."
+  },
+
+  "GENERATING_LABEL": {
+    "message": "Generating...",
+    "description": "An SSH key is currently being generated."
+  },
+
+  "COPY_PUBKEY_LINK_LABEL": {
+    "message": "Copy pubkey",
+    "description": "Copy the currently selected ssh public key to the clipboard."
+  },
+
+  "COPY_PUBKEY_LINK_ARIA_LABEL": {
+    "message": "copy pubkey",
+    "description": "The aria-label for the Copy Pubkey link."
+  },
+
   "SSH_ARGSTR_LABEL": {
     "message": "SSH Arguments",
     "description": "The label for the 'argstr' field."

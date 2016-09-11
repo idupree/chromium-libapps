@@ -3,6 +3,26 @@
   <head>
     <script src='../js/nassh_deps.concat.js'></script>
 
+    <script src="../js/forge/util.js"></script>
+    <script src="../js/forge/sha256.js"></script>
+    <script src="../js/forge/cipher.js"></script>
+    <script src="../js/forge/cipherModes.js"></script>
+    <script src="../js/forge/aes.js"></script>
+    <script src="../js/forge/prng.js"></script>
+    <script src="../js/forge/random.js"></script>
+    <script src="../js/forge/jsbn.js"></script>
+    <script src="../js/forge/asn1.js"></script>
+    <script src="../js/forge/pem.js"></script>
+    <script src="../js/forge/prime.js"></script>
+    <script src="../js/forge/rsa.js"></script>
+    <script src="../js/forge/pki.js"></script>
+    <script src="../js/forge/oids.js"></script>
+    <script src="../js/forge/x509.js"></script>
+    <script src="../js/forge/hmac.js"></script>
+    <script src="../js/forge/md5.js"></script>
+    <script src="../js/forge/sha1.js"></script>
+    <script src="../js/forge/ssh.js"></script>
+
     <script src='../js/nassh.js'></script>
     <script src='../js/nassh_css_variables.js'></script>
     <script src='../js/nassh_column_list.js'></script>
@@ -40,7 +60,9 @@
         </x-hbox>
         <br>
         <x-hbox x-align='baseline'>
-          <div x-box i18n='{"_": "IDENTITY_LABEL"}'>IDENTITY</div>:&nbsp;
+          <div x-box i18n='{"_": "IDENTITY_LABEL"}' id="identity-label"
+               >IDENTITY</div>:&nbsp;
+          <x-hbox x-align='baseline' style="flex: 0 1 auto; flex-wrap: wrap;">
           <select x-box id='field-identity' type='text'
                   i18n='{"aria-label": "$id"}'>
             <option i18n='{"_": "LOADING_LABEL"}'>LOADING...</option>
@@ -50,15 +72,25 @@
              i18n='{"aria-label": "$id", "_": "IMPORT_LINK_LABEL"}'
              >IMPORT...</a>
           <input type="file" multiple id='import-file-input' tabindex="-1">
+          <div x-box>&nbsp;</div>
+          <a x-box id='generate-link' tabindex='0' href='go:generate'
+             i18n='{"aria-label": "$id", "_": "GENERATE_LINK_LABEL"}'
+             >GENERATE...</a>
+          <div x-box>&nbsp;</div>
+          <a x-box id='copy-pubkey-link' tabindex='0' href='go:copy-pubkey'
+             i18n='{"aria-label": "$id", "_": "COPY_PUBKEY_LINK_LABEL"}'
+             >GENERATE...</a>
+          </x-hbox>
         </x-hbox>
         <x-hbox x-align='baseline'>
-          <div x-box i18n='{"_": "SSH_ARGSTR_LABEL"}'
+          <div x-box i18n='{"_": "SSH_ARGSTR_LABEL"}' id="argstr-label"
                >SSH ARGUMENTS</div>:&nbsp;
           <input x-box id='field-argstr' x-flex='1' type='text'
                  i18n='{"aria-label": "$id", "placeholder": "$id"}'>
         </x-hbox>
         <x-hbox x-align='baseline'>
           <div x-box i18n='{"_": "TERMINAL_PROFILE_LABEL"}'
+               id="terminal-profile-label"
                >TERMINAL PROFILE</div>:&nbsp;
           <input x-box id='field-terminal-profile' type='text'
                  i18n='{"aria-label": "$id", "placeholder": "$id"}'>

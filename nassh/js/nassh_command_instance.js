@@ -652,6 +652,14 @@ nassh.CommandInstance.prototype.onConnectDialog_.connectToProfile = function(
 };
 
 /**
+ * Sent from the dialog when the user asks to copy their pubkey.
+ */
+nassh.CommandInstance.prototype.onConnectDialog_.copy = function(
+    dialogFrame, textToCopy) {
+  dialogFrame.terminal_.copyStringToClipboard(textToCopy);
+};
+
+/**
  * Plugin message handlers.
  */
 nassh.CommandInstance.prototype.onPlugin_ = {};
